@@ -1,14 +1,7 @@
 import hashlib
 import datetime
 import json
-from flask import Flask
-
-# python -m flask --app blockchain.py run --> CMD to run server
-app = Flask(__name__)
-@app.route("/")
-def hello_world():
-    return "<h1>xd</h1>"
-
+from flask import Flask, jsonify, render_template
 
 class  Blockchain:
 
@@ -63,3 +56,31 @@ blockchain = Blockchain()
 print(blockchain.chain[0]["index"])
 
 
+# "python -m flask --app blockchain.py run" --> CMD to run a server
+# Renderujemy plik HTML po wejsciu na root "/"
+app = Flask(__name__)
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+# Wydobywamy nowy blok
+@app.route("/mine_block", methods = ["GET"])
+def mine_block():
+    previousBlock = blockchain.getPrevBlock()
+    previousProof = previousBlock["proof"]
+    proof = blockchain.proof_of_work(previousProof)
+    previousHash = blockchain.hash(previousBlock)
+    block = blockchain.createBlock(proof, previousHash)
+    response = {"message":"You've mined a block",
+                "index":block["index"],
+                "timestamp":block["timestamp"],
+                "proof":block["proof"],
+                "previous_hash":block["previous_hash"]}
+    return jsonify(response), 200
+
+# Sprawdzamy caly blockchain
+@app.route("/get_chain", methods = ["GET"])
+def get_chain():
+    response = {"chain":blockchain.chain,
+                "length":len(blockchain.chain)}
+    return jsonify(response), 200
