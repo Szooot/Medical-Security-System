@@ -5,21 +5,26 @@ from flask import Flask, jsonify, render_template
 
 class  Blockchain:
 
+# Konstruktor
     def __init__(self):
         self.chain = []
         self.createBlock(proof = 1, previousHash = '0')
-    
-    def createBlock(self, proof, previousHash):
+
+# Tworzenie nowego bloku (pacjenta)
+    def createBlock(self, proof, previousHash, patientData = {"name":None}):
         block = {"index": len(self.chain) + 1,
                  "timestamp": str(datetime.datetime.now()),
                  "proof": proof,
-                 "previous_hash": previousHash}
+                 "previous_hash": previousHash,
+                 "data":patientData}
         self.chain.append(block)
         return block
 
+# Sprawdzenie ostatniego bloku
     def getPrevBlock(self):
         return self.chain[-1]
-    
+
+# Dowod pracy wydobycia bloku
     def proof_of_work(self, previousProof):
         new_proof = 1
         check_proof = False
@@ -30,11 +35,13 @@ class  Blockchain:
             else:
                 new_proof += 1
         return new_proof
-    
+
+# Funkcja haszujaca
     def hash(self, block):
         encodedBlock = json.dumps(block, sort_keys = True).encode()
         return hashlib.sha256(encodedBlock).hexdigest()
-    
+
+ # Sprawdzenie czy lancuch jest poprawny  
     def isChainValid(self, chain):
         previousBlock = chain[0]
         blockIndex = 1
@@ -51,14 +58,13 @@ class  Blockchain:
             blockIndex += 1
         return True
     
-
+# Instancja klasy
 blockchain = Blockchain()
-print(blockchain.chain[0]["index"])
-
 
 # "python -m flask --app blockchain.py run" --> CMD to run a server
+
 # Renderujemy plik HTML po wejsciu na root "/"
-app = Flask(__name__)
+app = Flask(__name__, template_folder="src")
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -84,3 +90,8 @@ def get_chain():
     response = {"chain":blockchain.chain,
                 "length":len(blockchain.chain)}
     return jsonify(response), 200
+
+## Sprawdzay czy skrypt jest uruchamiany bezposrednio z glownego modulu
+if __name__ == '__main__':
+    app.debug = True
+    app.run()

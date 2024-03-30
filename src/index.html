@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Security System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='box-fill.svg') }}" type="image/x-icon">
+</head>
+<body>
+    <h1>Witaj na mojej stronie głównej!</h1>
+    <button onclick="mineBlock()">Mine a Block</button>
+    <button onclick="getChain()">Get Blockchain</button>
+    <script src="{{url_for('static', filename='index.js')}}"></script>
+</body>
+</html>
