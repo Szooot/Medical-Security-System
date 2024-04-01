@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Add New Patient{% endblock %}
+{% block content %}
+<form action="mine_block" method="post">
+    <label for="name">Name:</label><br>
+    <input type="text" id="name" name="name" required><br>
+
+    <label for="surname">Surname:</label><br>
+    <input type="text" id="surname" name="surname" required><br>
+
+    <label for="pesel">Pesel:</label><br>
+    <input type="number" id="pesel" name="pesel" required maxlength="11"><br>
+
+    <label for="disease">Disase:</label><br>
+    <textarea name="message" rows="10" cols="30">Describe your health problem...</textarea>
+
+    <input type="submit" value="Wyślij">
+    <input type="reset" value="Reset">
+</form>
+{% endblock %}

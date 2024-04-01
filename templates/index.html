@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Medical Security System{% endblock %}
+{% block content %}
+    <h1>Witaj na mojej stronie głównej!</h1>
+    <button onclick="patientData()">Add New Block</button>
+    <button onclick="getChain()">Get Chain</button>
+    <button onclick="getBlock()">Get Block</button>
+    <img src="{{url_for('static', filename='box-fill.svg')}}">
+    <script src="{{url_for('static', filename='index.js')}}"></script>
+{% endblock %}

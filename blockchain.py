@@ -1,17 +1,17 @@
 import hashlib
 import datetime
 import json
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request, redirect, url_for
 
 class  Blockchain:
 
 # Konstruktor
     def __init__(self):
         self.chain = []
-        self.createBlock(proof = 1, previousHash = '0')
+        self.createBlock(proof = 1, previousHash = '0', patientData="Genesis Block")
 
 # Tworzenie nowego bloku (pacjenta)
-    def createBlock(self, proof, previousHash, patientData = {"name":None}):
+    def createBlock(self, proof, previousHash, patientData):
         block = {"index": len(self.chain) + 1,
                  "timestamp": str(datetime.datetime.now()),
                  "proof": proof,
@@ -64,25 +64,41 @@ blockchain = Blockchain()
 # "python -m flask --app blockchain.py run" --> CMD to run a server
 
 # Renderujemy plik HTML po wejsciu na root "/"
-app = Flask(__name__, template_folder="src")
+app = Flask(__name__)
 @app.route("/")
 def index():
     return render_template("index.html")
 
+@app.route("/patient_data")
+def patientData():
+    return render_template("patient_data.html")
+
 # Wydobywamy nowy blok
-@app.route("/mine_block", methods = ["GET"])
+@app.route("/mine_block", methods = ["GET", "POST"])
 def mine_block():
+    if request.method == 'POST':
+        name = request.form['name']
+        surname = request.form['surname']
+        pesel = request.form['pesel']
+        disease = request.form['message']
+        patientData = {
+            "name": name,
+            "surname": surname,
+            "pesel": pesel,
+            "disease": disease }
+    
     previousBlock = blockchain.getPrevBlock()
     previousProof = previousBlock["proof"]
     proof = blockchain.proof_of_work(previousProof)
     previousHash = blockchain.hash(previousBlock)
-    block = blockchain.createBlock(proof, previousHash)
+    block = blockchain.createBlock(proof, previousHash, patientData)
     response = {"message":"You've mined a block",
                 "index":block["index"],
                 "timestamp":block["timestamp"],
                 "proof":block["proof"],
-                "previous_hash":block["previous_hash"]}
-    return jsonify(response), 200
+                "previous_hash":block["previous_hash"],
+                "patient_data": patientData}
+    return redirect(url_for('index'))
 
 # Sprawdzamy caly blockchain
 @app.route("/get_chain", methods = ["GET"])
@@ -91,7 +107,12 @@ def get_chain():
                 "length":len(blockchain.chain)}
     return jsonify(response), 200
 
+# Sprawdzamy konkretny blok
+@app.route("/get_block", methods = ["GET"])
+def get_block():
+    response =blockchain.chain[-1]
+    return jsonify(response), 200
+
 ## Sprawdzay czy skrypt jest uruchamiany bezposrednio z glownego modulu
 if __name__ == '__main__':
-    app.debug = True
-    app.run()
+    app.run(debug=True)
