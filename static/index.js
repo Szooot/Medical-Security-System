@@ -4,6 +4,10 @@ function getChain() {
 function getBlock() {
     window.location.href = "/get_block";
 }
-function patientData() {
-    window.location.href = "/patient_data";
+function showInput() {
+    let input = document.getElementById("block_number");
+    input.style.display = "block";
+}
+function patientForm() {
+    window.location.href = "/patient_form";
 }
