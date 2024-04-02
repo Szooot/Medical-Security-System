@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Chain of Patients{% endblock %}
+{% block content %}
+<h1>Łańcuch Blockchain</h1>
+    <h3>Długość łańcucha: {{ length }}</h3>
+    <ul>
+        {% for block in chain %}
+            <li>Indeks: {{ block.index }}</li>
+            <li>Timestamp: {{ block.timestamp }}</li>
+            <li>Proof: {{ block.proof }}</li>
+            <li>Hash: {{ block.hash }}</li>
+            <li>Poprzedni Hash: {{ block.previous_hash }}</li>
+            <hr>
+        {% endfor %}
+    </ul>
+{% endblock %}

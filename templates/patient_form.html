@@ -8,15 +8,20 @@
     <label for="surname">Surname:</label><br>
     <input type="text" id="surname" name="surname" required><br>
 
+    <label for="age">Age:</label><br>
+    <input type="number" id="age" name="age" required><br>
+
+    <label for="city">City:</label><br>
+    <input type="text" id="city" name="city" required><br>
+
     <label for="pesel">Pesel:</label><br>
-    <input type="number" id="pesel" name="pesel" required  placeholder="11 digits only..."><br>
+    <input type="number" id="pesel" name="pesel" placeholder="11 digits only..." required><br>
 
     <label for="disease">Disase:</label><br>
-    <textarea name="disease" rows="10" cols="30" placeholder="Describe your health problem..."></textarea>
+    <textarea name="disease" rows="10" cols="30" placeholder="Describe your health problem..." required></textarea>
 
-    <input type="submit" value="Send">  
+    <input type="submit" value="Add">  
     <input type="reset" value="Reset">
 </form>
 <script src="{{url_for('static', filename='validation.js')}}"></script>
-<script src="{{url_for('static', filename='index.js')}}"></script>
 {% endblock %}
