@@ -148,7 +148,7 @@ def get_block():
                 "previous_hash": blockchain.chain[number-1]["previous_hash"],
                 "data": blockchain.chain[number-1]["data"]
             }
-            return render_template("index.html", block_data = response)
+            return render_template("block.html", block_data = response)
     
 ## Sprawdzay czy skrypt jest uruchamiany bezposrednio z glownego modulu
 if __name__ == "__main__":

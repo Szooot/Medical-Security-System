@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Patient's Data{% endblock %}
+{% block content %}
+    {% if block_data %}  
+    <h3>Dane bloku:</h3>
+    <ul>
+        <li>Indeks: {{ block_data['index'] }}</li>
+        <li>Timestamp: {{ block_data['timestamp'] }}</li>
+        <li>Proof: {{ block_data['proof'] }}</li>
+        <li>Hash: {{ block_data['previous_hash'] }}</li>
+        <li>Poprzedni Hash: {{ block_data['previous_hash'] }}</li>
+    </ul>
+    <hr>
+    <h3>Dane pacjenta:</h3>
+    <ul>
+        <li>Imię: {{ block_data['data']['name'] }}</li>
+        <li>Nazwisko: {{ block_data['data']['surname'] }}</li>
+        <li>Wiek: {{ block_data['data']['age'] }}</li>
+        <li>Miasto: {{ block_data['data']['city'] }}</li>
+        <li>PESEL: {{ block_data['data']['pesel'] }}</li>
+        <li>Dolegliwość: {{ block_data['data']['disease'] }}</li>
+    </ul>
+    {% endif %}
+{% endblock %}

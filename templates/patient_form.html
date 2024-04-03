@@ -1,27 +1,37 @@
 {% extends "base.html" %}
 {% block title %}Add New Patient{% endblock %}
 {% block content %}
-<form action="mine_block" method="post" id="patientForm">
-    <label for="name">Name:</label><br>
-    <input type="text" id="name" name="name" required><br>
-
-    <label for="surname">Surname:</label><br>
-    <input type="text" id="surname" name="surname" required><br>
-
-    <label for="age">Age:</label><br>
-    <input type="number" id="age" name="age" required><br>
-
-    <label for="city">City:</label><br>
-    <input type="text" id="city" name="city" required><br>
-
-    <label for="pesel">Pesel:</label><br>
-    <input type="number" id="pesel" name="pesel" placeholder="11 digits only..." required><br>
-
-    <label for="disease">Disase:</label><br>
-    <textarea name="disease" rows="10" cols="30" placeholder="Describe your health problem..." required></textarea>
-
-    <input type="submit" value="Add">  
-    <input type="reset" value="Reset">
-</form>
+    <main class="form-signin w-100 m-auto">
+        <form class="row g-3 mx-auto" action="mine_block" method="post" id="patientForm">
+            <img class="mb-4" src="{{url_for('static', filename='plus-square.svg')}}" alt="block logo" width="72" height="57">
+            <h1 id="caption" class="h3 mb-3 fw-normal">Enter Data About New Patient:</h1>
+            <div class="form-floating">
+                <input type="text" id="name" name="name" class="form-control" required>
+                <label for="floatingInput">Name:</label>
+            </div>
+            <div class="form-floating">
+                <input type="text" id="surname" name="surname" class="form-control" required>
+                <label for="floatingPassword">Surname:</label>
+            </div>
+            <div class="form-floating">
+                <input type="number" id="age" name="age" class="form-control" required>
+                <label for="floatingInput">Age:</label>
+            </div>
+            <div class="form-floating">
+                <input type="text" id="city" name="city" class="form-control" required>
+                <label for="floatingInput">City</label>
+            </div>
+            <div class="form-floating">
+                <input type="number" id="pesel" name="pesel" class="form-control" required>
+                <label for="floatingInput">Pesel</label>
+            </div>
+            <div class="form-floating">
+                <textarea name="disease" id="textarea" rows="40" class="form-control" required></textarea>
+                <label for="floatingInput">Disease:</label>
+            </div>
+            <input type="submit" value="ADD" class="btn btn-primary">  
+            <input type="reset" value="RESET" class="btn btn-primary">
+        </form>
+    </main>
 <script src="{{url_for('static', filename='validation.js')}}"></script>
 {% endblock %}
