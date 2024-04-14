@@ -32,13 +32,7 @@
                 <div>
                     <h3 class="fs-2 text-body-emphasis">Get Block</h3>
                     <p>Enter a block number and PESEL. <br> If they are correct, you can see details about the patient such as disease, name, city, etc.</p>
-                    <button onclick="showInput()" class="btn btn-primary">Get Block</button>
-                    <form action="get_block" method="post" style="display: none;" id="block_number">
-                        <label for="block_number">Enter block number:</label>
-                        <input type="number" name="block_number">
-                        <input type="number" name="block_pesel">
-                        <button onclick="get_block()">Submit</button>
-                    </form>
+                    <button onclick="get_block_form()" class="btn btn-primary">Get Block</button>
                 </div>
             </div>
             </div>
