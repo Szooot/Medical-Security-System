@@ -1,11 +1,46 @@
 from blockchain import blockchain
 from flask import Flask, render_template, request, redirect, url_for, flash, session
- 
-# "python -m flask --app app.py run" --> CMD to run a server
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+import psycopg2
 
-# Renderujemy pliki HTML po wejsciu na endpoint'y
+# "python -m flask --app app.py run" lub "flask run"--> CMD to run a server
+
 app = Flask(__name__)
 app.secret_key = "admin"
+
+# Konfiguracja bazy danych PostgreSQL
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123qweasd@localhost/hospital'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+def hash_password(password):
+    return generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
+
+#Definiowanie modeli ktore beda odpowiadac tabelk z bazy danych
+class User(db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)  # Klucz główny
+    login = db.Column(db.String(40))
+    password = db.Column(db.String(200))
+    patients = db.relationship('Patient', backref='user', lazy=True)  # Relacja z tabelą patients
+
+class Patient(db.Model):
+    __tablename__ = 'patients'
+    block_id = db.Column(db.Integer, primary_key=True)
+    users_id = db.Column(db.Integer, db.ForeignKey('users.id'))  # Klucz obcy odwołujący się do users
+
+@app.route('/login', methods=['POST'])  # Endpoint, który odbiera dane z formularza
+def login():
+    username = request.form.get('username')
+    raw_password = request.form.get('password')
+    password = hash_password(raw_password)
+    # Utworzenie nowego użytkownika i zapisanie go do bazy danych
+    new_user = User(login=username, password=password)
+    db.session.add(new_user)  # Dodaje do sesji
+    db.session.commit()  # Zapisuje zmiany
+    return redirect(url_for('index'))  # Przekierowuje po zakończeniu operacji
 
 @app.route("/")
 def index():
