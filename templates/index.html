@@ -2,8 +2,7 @@
 {% block title %}Medical Security System{% endblock %}
 {% block content %}
     <main>
-        <div class="container px-4 py-5" id="hanging-icons">
-            <h2 class="pb-2 border-bottom">Healthcare Data Security</h2>
+        <div class="container px-4 py-5 custom_buttons" id="hanging-icons">
             <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
             <div class="col d-flex align-items-start">
                 <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
@@ -12,7 +11,7 @@
                 <div>
                     <h3 class="fs-2 text-body-emphasis">Add New Patient</h3>
                     <p>You can add a new patient to the Blockchain. <br>To do so, fill out the form with all the required information.</p>
-                    <button onclick="patientForm()" class="btn btn-primary">Add New Patient</button>
+                    <button onclick="patientForm()">Add New Patient</button>
                 </div>
             </div>
             <div class="col d-flex align-items-start">
@@ -22,7 +21,7 @@
                 <div>
                     <h3 class="fs-2 text-body-emphasis">Get Chain</h3>
                     <p>Check the entire Blockchain, but without details about each patient (only block details are included, no patient data).</p>
-                    <button onclick="getChain()" class="btn btn-primary">Get Chain</button>
+                    <button onclick="getChain()">Get Chain</button>
                 </div>
             </div>
             <div class="col d-flex align-items-start">
@@ -32,7 +31,7 @@
                 <div>
                     <h3 class="fs-2 text-body-emphasis">Get Block</h3>
                     <p>Enter a block number and PESEL. <br> If they are correct, you can see details about the patient such as disease, name, city, etc.</p>
-                    <button onclick="get_block_form()" class="btn btn-primary">Get Block</button>
+                    <button onclick="get_block_form()">Get Block</button>
                 </div>
             </div>
             </div>
