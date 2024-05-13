@@ -31,7 +31,7 @@
   top: 10px;
   right: 10px;
   cursor: pointer;
-  font-size: 24px;
+  font-size: 30px;
 }
 
 .modal-content button {
@@ -39,4 +39,12 @@
   cursor: pointer;
   white-space: nowrap;
   border-radius: 10px;
+  border-style: solid;
+  font-weight: bolder;
+  transition: border-color 0.3s;
+}
+
+.modal-content button:hover {
+  border-color: gray;
+  transform: scale(1.1);
 }

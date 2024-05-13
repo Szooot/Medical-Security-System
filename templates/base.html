@@ -31,34 +31,34 @@
             </div>
         </div>
     </nav>
-    <div id="loginModal" class="modal">
+    <div class="modal" id="loginModal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h2>Login</h2>
-            <form action="/login" method="post" class="modal_form">
+            <form action="/login" method="post" class="modal_form" id="loginModal-form">
                 <label for="username">Username:</label> <br>
                 <input type="text" id="username" name="username"> <br>
                 <label for="password">Password:</label> <br>
                 <input type="password" id="password" name="password"> <br> <br>
-                <button type="submit">Submit</button>
+                <button type="submit" style="margin-left: 56px;">Submit</button>
             </form>
             <br> 
             <p>Don't have an account yet?</p>
             <button id="register" type="submit">Register</button>
         </div>
     </div>
-    <div id="registerModal" class="modal">
+    <div class="modal" id="registerModal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h2>Register</h2>
-            <form action="/register" method="post">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username"> <br>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password"> <br>
-                <label for="re-password">Password compatibility:</label>
-                <input type="password" id="re-password" name="re-password"> <br>
-                <button type="submit">Submit</button>
+            <form action="/register" method="post" id="registerModal-form">
+                <label for="username">Username:</label> <br>
+                <input type="text" id="new_username" name="new_username"> <br>
+                <label for="new_password">Password:</label> <br>
+                <input type="password" id="new_password" name="new_password"> <br>
+                <label for="re-new_password">Password compatibility:</label> <br>
+                <input type="password" id="re-new_password" name="re-new_password"> <br> <br>
+                <button type="submit" style="margin-left: 50px;">Submit</button>
             </form>
         </div>
     </div>
