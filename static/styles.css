@@ -3,17 +3,12 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background: -moz-linear-gradient(205deg, rgba(233, 89, 92, 1) 0%, rgba(41, 7, 170, 0.67) 64%, rgba(22, 30, 36, 1) 95%); 
-    background: -webkit-linear-gradient(205deg, rgba(233, 89, 92, 1) 0%, rgba(41, 7, 170, 0.67) 64%, rgba(22, 30, 36, 1) 95%);
-    background: -o-linear-gradient(205deg, rgba(233, 89, 92, 1) 0%, rgba(41, 7, 170, 0.67) 64%, rgba(22, 30, 36, 1) 95%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#161E24', endColorstr='#E9595C', GradientType=1 );
-    background: -ms-linear-gradient(205deg, rgba(233, 89, 92, 1) 0%, rgba(41, 7, 170, 0.67) 64%, rgb(86, 102, 168) 95%);
-    background: linear-gradient(205deg, rgba(233, 89, 92, 1) 0%, rgba(41, 7, 170, 0.67) 64%, rgb(85, 56, 127) 95%);
+    background-color: #53595f;
+    color: aliceblue;
 }
 
 .navbar {
-    padding: 10px;
-    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2); 
+    padding: 12px;
 }
 
 .navbar-content {
@@ -22,6 +17,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background-color: #697078;
+    border-radius: 10px;
+    margin: 5px 0 5px 0;
+    padding: 5px 0 5px 0;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.4); 
 }
 
 .logo {
@@ -40,7 +40,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 8px;
+    gap: 10px;
     margin-right: 10%;
 }
 
@@ -50,15 +50,17 @@ body {
     cursor: pointer;
     white-space: nowrap;
     color: white;
-    background-color: #212529;;
+    background-color: #212529;
     border-radius: 15px;
     border-style: none;
     transition: background-color 0.3s;
+    transition: margin-bottom 0.2s;
     box-shadow: 0px 5px 9px rgba(0, 0, 0, 0.2); 
 }
 
 .navbar-content_links button:hover {
-    background-color: rgb(132, 56, 57);
+    background-color: rgb(49, 178, 131);
+    margin-bottom: 2px;
     transform: scale(1.2);
 }
 
@@ -76,6 +78,7 @@ body {
 
 .custom_buttons button{
     padding: 8px;
+    margin-bottom: 10px;
     cursor: pointer;
     white-space: nowrap;
     color: white;
@@ -84,10 +87,12 @@ body {
     border-style: none;
     transition: border-radius 0.9s;
     transition: transform 0.4s;
+    transition: background-color 0.3s;
     box-shadow: 0px 5px 9px rgba(0, 0, 0, 0.5);
 }
 
 .custom_buttons button:hover {
     border-radius: 15px;
     transform: scale(1.2);
+    background-color: rgb(49, 178, 131);
 }

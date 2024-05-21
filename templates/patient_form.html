@@ -1,37 +1,39 @@
 {% extends "base.html" %}
 {% block title %}Add New Patient{% endblock %}
 {% block content %}
-    <main>
-        <form action="mine_block" method="post" id="patientForm">
-            <img src="{{url_for('static', filename='plus-square.svg')}}" alt="block logo">
-            <h1 id="caption">Enter Data About New Patient:</h1>
-            <div>
-                <input type="text" id="name" name="name" required>
-                <label for="floatingInput">Name:</label>
-            </div>
-            <div>
-                <input type="text" id="surname" name="surname" required>
-                <label for="floatingPassword">Surname:</label>
-            </div>
-            <div>
-                <input type="number" id="age" name="age" required>
-                <label for="floatingInput">Age:</label>
-            </div>
-            <div>
-                <input type="text" id="city" name="city" required>
-                <label for="floatingInput">City</label>
-            </div>
-            <div>
-                <input type="number" id="pesel" name="pesel" required>
-                <label for="floatingInput">Pesel</label>
-            </div>
-            <div>
-                <textarea name="disease" id="textarea" rows="20" required></textarea>
-                <label for="floatingInput">Disease:</label>
-            </div>
-            <input type="submit" value="ADD">  
-            <input type="reset" value="RESET">
-        </form>
+    <main class="centered-container">
+        <div class="patient_form">
+            <form action="mine_block" method="post" id="patientForm" >
+                <img src="{{url_for('static', filename='plus-square.svg')}}" alt="block logo">
+                <h1 id="caption">Enter Data About New Patient:</h1>
+                <div class="patient_form-content">
+                    <input type="text" id="name" name="name" required>
+                    <label for="floatingInput">Name:</label>
+                </div>
+                <div class="patient_form-content">
+                    <input type="text" id="surname" name="surname" required>
+                    <label for="floatingPassword">Surname:</label>
+                </div>
+                <div class="patient_form-content">
+                    <input type="number" id="age" name="age" required>
+                    <label for="floatingInput">Age:</label>
+                </div>
+                <div class="patient_form-content">
+                    <input type="text" id="city" name="city" required>
+                    <label for="floatingInput">City</label>
+                </div>
+                <div class="patient_form-content">
+                    <input type="number" id="pesel" name="pesel" required>
+                    <label for="floatingInput">Pesel</label>
+                </div>
+                <div class="patient_form-content">
+                    <textarea name="disease" id="textarea" rows="5" required></textarea>
+                    <label for="floatingInput">Disease:</label>
+                </div>
+                <input type="submit" value="ADD">  
+                <input type="reset" value="RESET">
+            </form>
+        </div>
     </main>
 <script src="{{url_for('static', filename='validation.js')}}"></script>
 {% endblock %}
