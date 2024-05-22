@@ -1,15 +1,35 @@
-// redirections
+//redirections
+function checkLoginAndRedirect(url) {
+  fetch('/is_logged_in')
+      .then(response => response.json())
+      .then(data => {
+          if (data.logged_in) {
+              window.location.href = url;
+          } else {
+              document.getElementById('loginModal').style.display = 'flex';
+          }
+      })
+      .catch(error => console.error('Error:', error));
+}
+
 function getChain() {
-    window.location.href = "/get_chain";
+  checkLoginAndRedirect("/get_chain");
 }
+
 function get_block_form() {
-    window.location.href = "/get_block_form";
+  checkLoginAndRedirect("/get_block");
 }
+
 function patientForm() {
-    window.location.href = "/patient_form";
+  checkLoginAndRedirect("/patient_form");
 }
+
 function index() {
-    window.location.href = "/";
+  window.location.href = "/";
+}
+
+function logout() {
+  window.location.href = "/logout";
 }
 
 // handlers
@@ -38,7 +58,7 @@ window.addEventListener('click', (event) => {
   }
 });
 
-// changing login modal to register modal while click evet on register button
+// changing login modal to register modal while click event on register button
 registerButton.addEventListener('click', () => {
   loginModal.style.display = 'none';
   registerModal.style.display = 'flex';
@@ -53,7 +73,7 @@ window.addEventListener('click', (event) => {
 
 // hiding register modal while 'x' click event
 closeButton2.addEventListener('click', () => {
-  registerModal.style.display = 'none'; // Ukrycie modalu
+  registerModal.style.display = 'none'; 
 });
 
 //register password validation

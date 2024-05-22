@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='modal.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='patient_form.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='get_chain.css') }}">
 </head>
 <body>
     <nav class="navbar">
@@ -17,17 +18,24 @@
                 <a onclick="index()"><img src="{{url_for('static', filename='box-fill.svg')}}" alt="logo" class="logo"></a>
             </div>
             <div class="navbar-content_links">
-                <div class="navbar-content_links_item">
-                    <img src="{{url_for('static', filename='person.svg')}}" alt="Sign in">
-                    <button onclick="" id="signInButton">Sign in</button>
-                </div>
+                {% if 'username' in session %}
+                    <div class="navbar-content_links_item">
+                        <img src="{{url_for('static', filename='person.svg')}}" alt="Sign in">
+                        <a href="{{ url_for('logout') }}"><button style="font-weight: bolder; text-transform:capitalize;" id="log">{{session['username'] }}</button></a>
+                    </div>
+                {% else %}
+                    <div class="navbar-content_links_item">
+                        <img src="{{url_for('static', filename='person.svg')}}" alt="Sign in">
+                        <button id="signInButton">Sign in</button>
+                    </div>
+                {% endif %}
                 <div class="navbar-content_links_item">
                     <img src="{{url_for('static', filename='geo-alt-fill.svg')}}" alt="Contact">
-                    <button onclick="">Contact</button>
+                    <button>Contact</button>
                 </div>
                 <div class="navbar-content_links_item">
                     <img src="{{url_for('static', filename='info-circle.svg')}}" alt="About Us">
-                    <button onclick="">About Us</button>
+                    <button>About Us</button>
                 </div>
             </div>
         </div>
@@ -45,7 +53,7 @@
             </form>
             <br> 
             <p>Don't have an account yet?</p>
-            <button id="register" type="submit">Register</button>
+            <button id="register" type="button">Register</button>
         </div>
     </div>
     <div class="modal" id="registerModal">
@@ -53,7 +61,7 @@
             <span class="close-button">&times;</span>
             <h2>Register</h2>
             <form action="/register" method="post" id="registerModal-form">
-                <label for="username">Username:</label> <br>
+                <label for="new_username">Username:</label> <br>
                 <input type="text" id="new_username" name="new_username"> <br>
                 <label for="new_password">Password:</label> <br>
                 <input type="password" id="new_password" name="new_password"> <br>
@@ -63,6 +71,18 @@
             </form>
         </div>
     </div>
+    <script>
+        // Change username button text on hover
+        const logButton = document.getElementById('log');
+
+        logButton.addEventListener('mouseenter', () => {
+            logButton.textContent = 'Logout';
+        });
+
+        logButton.addEventListener('mouseleave', () => {
+            logButton.textContent = '{{session["username"]}}';
+        });
+    </script>
     <script src="{{url_for('static', filename='index.js')}}"></script>
     {% block content %}{% endblock %}
 </body>

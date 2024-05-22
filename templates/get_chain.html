@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Chain of Patients{% endblock %}
 {% block content %}
-<h1>Łańcuch Blockchain</h1>
-    <h3>Długość łańcucha: {{ length }}</h3>
-    <ul>
-        {% for block in chain %}
-            <li>Indeks: {{ block.index }}</li>
-            <li>Timestamp: {{ block.timestamp }}</li>
-            <li>Proof: {{ block.proof }}</li>
-            <li>Hash: {{ block.hash }}</li>
-            <li>Poprzedni Hash: {{ block.previous_hash }}</li>
-            <hr>
-        {% endfor %}
-    </ul>
+<div class="chain_render">
+    <h1>Blockchain</h1>
+        <h3>Length: {{ length }}</h3>
+        <ul class="chain_render-content">
+            {% for block in chain %}
+                <li>Index: {{ block.index }}</li>
+                <li>Timestamp: {{ block.timestamp }}</li>
+                <li>Proof: {{ block.proof }}</li>
+                <li>Hash: {{ block.hash }}</li>
+                <li>Prev Hash: {{ block.previous_hash }}</li>
+                <hr>
+            {% endfor %}
+        </ul>
+</div>
 {% endblock %}

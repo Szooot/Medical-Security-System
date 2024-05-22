@@ -1,35 +1,69 @@
-from blockchain import blockchain
-from flask import Flask, render_template, request, redirect, url_for, flash, session
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
-import psycopg2
-
-# "python -m flask --app app.py run" or "flask run"--> CMD to run a server
-
-app = Flask(__name__)
-app.secret_key = "admin"
-
-# Konfiguracja bazy danych PostgreSQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123qweasd@localhost/hospital'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
+from datetime import datetime
+from config import app, db  # Importujemy app i db z config.py
+from blockchain import blockchain  # Importujemy blockchain po zdefiniowaniu app i db
+import json
 
 def hash_password(password):
     return generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
 
-#Definiowanie modeli ktore beda odpowiadac tabelkom z bazy danych
+# Definiowanie modeli
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)  # Klucz główny
+    id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(40))
     password = db.Column(db.String(200))
-    patients = db.relationship('Patient', backref='user', lazy=True)  # Relacja z tabelą patients
+    patients = db.relationship('Patient', backref='user', lazy=True)
 
 class Patient(db.Model):
     __tablename__ = 'patients'
     block_id = db.Column(db.Integer, primary_key=True)
-    users_id = db.Column(db.Integer, db.ForeignKey('users.id'))  # Klucz obcy odwołujący się do users
+    users_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+class Block(db.Model):
+    __tablename__ = 'blocks'
+    index = db.Column(db.Integer, primary_key=True, nullable=False)
+    timestamp = db.Column(db.String, nullable=False)
+    proof = db.Column(db.Integer, nullable=False)
+    hash = db.Column(db.String, nullable=False)
+    previous_hash = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship('User', backref='blocks')
+    patient_data = db.Column(db.Text)
+
+# Funkcja inicjalizująca tabelę z Genesis Block
+def initialize_genesis_block():
+    genesis_block_exists = Block.query.filter_by(index=1).first() is not None
+    if not genesis_block_exists:
+        genesis_block = Block(
+            index=1,
+            timestamp=str(datetime.now()),
+            proof=1,
+            hash='0',
+            previous_hash='0'
+        )
+        db.session.add(genesis_block)
+        db.session.commit()
+        print("Genesis Block initialized")
+    else:
+        print("Genesis Block already exists")
+
+@app.before_request
+def setup():
+    db.create_all()
+    initialize_genesis_block()
+
+@app.route('/is_logged_in') #Endpoint for checking if user is logged in
+def is_logged_in():
+    logged_in = 'username' in session
+    return jsonify(logged_in=logged_in)
+
+@app.route('/logout') #Endpoint for logout
+def logout():
+    session.pop('username', None)
+    flash('Logged out successfully!', 'success')
+    return redirect(url_for('index'))
 
 @app.route('/login', methods=['POST', 'GET'])  # Endpoint, który odbiera dane z formularza
 def login():
@@ -74,8 +108,12 @@ def patientData():
     return render_template("patient_form.html")
 
 # Wydobywamy nowy blok(dodawanie nowego pacjenta)
-@app.route("/mine_block", methods = ["GET", "POST"])
+@app.route("/mine_block", methods=["GET", "POST"])
 def mine_block():
+    if 'username' not in session:
+        flash('You need to be logged in to mine a block', 'error')
+        return redirect(url_for('login'))
+    
     if request.method == "POST":
         name = request.form["name"].capitalize()
         surname = request.form["surname"].capitalize()
@@ -91,28 +129,53 @@ def mine_block():
             "pesel": pesel,
             "disease": disease  
         }
-    previousBlock = blockchain.getPrevBlock()
-    previousProof = previousBlock["proof"]
-    proof = blockchain.proof_of_work(previousProof)
-    previousHash = blockchain.chain[-1]["hash"]
-    blockchain.createBlock(proof, previousHash, patientData)
-    flash("New patient added!")
-    return redirect(url_for("index"))
+        
+        user = User.query.filter_by(login=session['username']).first()
+        
+        # Pobranie ostatniego bloku z bazy danych
+        last_block = Block.query.order_by(Block.index.desc()).first()
+        
+        if last_block:
+            previous_proof = last_block.proof
+            previous_hash = last_block.hash
+            new_index = last_block.index + 1
+        else:
+            previous_proof = 1  # Genesis Block proof
+            previous_hash = '0'  # Genesis Block hash
+            new_index = 1
 
-# Sprawdzamy caly blockchain
-@app.route("/get_chain", methods = ["GET"])
+        proof = blockchain.proof_of_work(previous_proof)
+        new_block = blockchain.createBlock(proof, previous_hash, patientData)
+        
+        # Zapis nowego bloku do bazy danych
+        block_record = Block(
+            index=new_index,
+            timestamp=new_block["timestamp"],
+            proof=new_block["proof"],
+            hash=new_block["hash"],
+            previous_hash=new_block["previous_hash"],
+            user_id=user.id,
+            patient_data=json.dumps(patientData)  # Zapis danych pacjenta jako JSON
+        )
+        db.session.add(block_record)
+        db.session.commit()
+        
+        flash("New patient added!")
+        return redirect(url_for("index"))
+
+@app.route("/get_chain", methods=["GET"])
 def get_chain():
     chain_data = [{
-            "index": block["index"],
-            "timestamp": block["timestamp"],
-            "proof": block["proof"],
-            "hash": block["hash"],
-            "previous_hash": block["previous_hash"]
+            "index": block.index,
+            "timestamp": block.timestamp,
+            "proof": block.proof,
+            "hash": block.hash,
+            "previous_hash": block.previous_hash
         }
-        for block in blockchain.chain
+        for block in Block.query.order_by(Block.index).all()
     ]
-    chain_length = len(blockchain.chain)
-    return render_template("get_chain.html", chain = chain_data, length = chain_length)
+    chain_length = len(chain_data)
+    return render_template("get_chain.html", chain=chain_data, length=chain_length)
 
 # Sprawdzamy konkretny blok(pacjenta)
 @app.route("/get_block", methods = ["GET", "POST"])
