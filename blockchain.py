@@ -1,15 +1,15 @@
 import hashlib
 import datetime
 import json
-from config import db  # Zamiast importu z app.py
+from config import db
 
 class Blockchain:
-    # Konstruktor
+    # Consturctor
     def __init__(self):
         self.chain = []
         self.createBlock(proof=1, previousHash="0", patientData="Genesis Block")
 
-    # Tworzenie nowego bloku (pacjenta)
+    # Creating new blcok
     def createBlock(self, proof, previousHash, patientData):
         block = {
             "index": len(self.chain) + 1,
@@ -24,11 +24,11 @@ class Blockchain:
         self.chain.append(block)
         return block
 
-    # Sprawdzenie ostatniego bloku
+    # Checking last block
     def getPrevBlock(self):
         return self.chain[-1]
 
-    # Dowód pracy wydobycia bloku
+    # Proof of Work
     def proof_of_work(self, previousProof):
         new_proof = 1
         check_proof = False
@@ -40,27 +40,10 @@ class Blockchain:
                 new_proof += 1
         return new_proof
 
-    # Funkcja haszująca
+    # Hash function
     def hash(self, block):
         encodedBlock = json.dumps(block, sort_keys=True).encode()
         return hashlib.sha256(encodedBlock).hexdigest()
 
-    # Sprawdzenie czy łańcuch jest poprawny
-    def isChainValid(self, chain):
-        previousBlock = chain[0]
-        blockIndex = 1
-        while blockIndex < len(chain):
-            block = chain[blockIndex]
-            if block["previous_hash"] != self.hash(previousBlock):
-                return False
-            previousProof = previousBlock["proof"]
-            proof = block["proof"]
-            hash_operation = hashlib.sha256(str(proof ** 2 - previousProof ** 2).encode()).hexdigest()
-            if hash_operation[0:4] != "0000":
-                return False
-            previousBlock = block
-            blockIndex += 1
-        return True
-
-# Instancja klasy
+# Blockchain instance
 blockchain = Blockchain()

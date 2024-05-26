@@ -3,26 +3,32 @@
 {% block content %}
     {% if blocks_data %}
         {% for block_data in blocks_data %}
-            <h3>Dane bloku:</h3>
-            <ul>
-                <li>Indeks: {{ block_data['index'] }}</li>
+        <div class="chain_render">
+            <h4>Block number: {{ block_data['index'] }}</h4>
+            <ul  class="chain_render-content">
+                <h5>Block's Data:</h5>
+                <li>Index: {{ block_data['index'] }}</li>
                 <li>Timestamp: {{ block_data['timestamp'] }}</li>
                 <li>Proof: {{ block_data['proof'] }}</li>
-                <li>Poprzedni Hash: {{ block_data['previous_hash'] }}</li>
-            </ul>
-            <hr>
-            <h3>Dane pacjenta:</h3>
-            <ul>
-                <li>Imię: {{ block_data['data']['name'] }}</li>
-                <li>Nazwisko: {{ block_data['data']['surname'] }}</li>
-                <li>Wiek: {{ block_data['data']['age'] }}</li>
-                <li>Miasto: {{ block_data['data']['city'] }}</li>
+                <li>Hash: {{ block_data['hash'] }}</li>
+                <li>Prev Hash: {{ block_data['previous_hash'] }}</li>
+                <hr>
+                <h5>Patient's Data:</h5>
+                <li>Name: {{ block_data['data']['name'] }}</li>
+                <li>Surname: {{ block_data['data']['surname'] }}</li>
+                <li>Age: {{ block_data['data']['age'] }}</li>
+                <li>City: {{ block_data['data']['city'] }}</li>
                 <li>PESEL: {{ block_data['data']['pesel'] }}</li>
-                <li>Dolegliwość: {{ block_data['data']['disease'] }}</li>
+                <li>Disease: {{ block_data['data']['disease'] }}</li>
             </ul>
             <hr>
+        </div>
         {% endfor %}
     {% else %}
-        <p>Brak bloków do wyświetlenia.</p>
+    <div class="chain_render">
+        <ul  class="chain_render-content">
+            <li><p>No blocks added yet</p></li>
+        </ul>
+    </div>
     {% endif %}
 {% endblock %}

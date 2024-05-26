@@ -5,7 +5,7 @@ app = Flask(__name__)
 app.secret_key = "admin"
 
 # Konfiguracja bazy danych PostgreSQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123qweasd@localhost/hospital'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123qwe@localhost/hospital'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)

@@ -1,25 +1,20 @@
 from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
-from config import app, db  # Importujemy app i db z config.py
-from blockchain import blockchain  # Importujemy blockchain po zdefiniowaniu app i db
+from config import app, db
+from blockchain import blockchain
 import json
 
+# Data hash fucntion before adding to database
 def hash_password(password):
     return generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
 
-# Definiowanie modeli
+# Database table models
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(40))
     password = db.Column(db.String(200))
-    patients = db.relationship('Patient', backref='user', lazy=True)
-
-class Patient(db.Model):
-    __tablename__ = 'patients'
-    block_id = db.Column(db.Integer, primary_key=True)
-    users_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 class Block(db.Model):
     __tablename__ = 'blocks'
@@ -32,7 +27,7 @@ class Block(db.Model):
     user = db.relationship('User', backref='blocks')
     patient_data = db.Column(db.Text)
 
-# Funkcja inicjalizująca tabelę z Genesis Block
+# Generate Genesis Block if it's not exist
 def initialize_genesis_block():
     genesis_block_exists = Block.query.filter_by(index=1).first() is not None
     if not genesis_block_exists:
@@ -54,60 +49,58 @@ def setup():
     db.create_all()
     initialize_genesis_block()
 
-@app.route('/is_logged_in') #Endpoint for checking if user is logged in
+# Endpoint for checking if user is logged in
+@app.route('/is_logged_in') 
 def is_logged_in():
     logged_in = 'username' in session
     return jsonify(logged_in=logged_in)
 
-@app.route('/logout') #Endpoint for logout
+# Endpoint for logout
+@app.route('/logout') 
 def logout():
     session.pop('username', None)
     flash('Logged out successfully!', 'success')
     return redirect(url_for('index'))
 
-@app.route('/login', methods=['POST', 'GET'])  # Endpoint, który odbiera dane z formularza
+# Login endpoint
+@app.route('/login', methods=['POST', 'GET'])  
 def login():
     username = request.form.get('username')
     raw_password = request.form.get('password')
-     # Pobranie użytkownika z bazy danych na podstawie nazwy użytkownika
+     # Checking for user in dataabse
     user = User.query.filter_by(login=username).first()
-    
-    # Sprawdzenie czy użytkownik istnieje i czy hasło jest poprawne
+    # Checking if user exist and is password correct
     if user and check_password_hash(user.password, raw_password):
-        # Jeśli hasło jest poprawne, zapisz nazwę użytkownika w sesji
         session['username'] = username
         flash('Logged in successfully!', 'success')
         return redirect(url_for('index'))
     else:
-        # Jeśli użytkownik nie istnieje lub hasło jest niepoprawne, wyświetl błąd
+        # If user or password incorrect, then flash error
         flash('Invalid username or password. Please try again.', 'error')
-        return redirect(url_for('index'))  # Możesz przekierować gdziekolwiek chcesz
+        return redirect(url_for('index'))
 
 @app.route('/register', methods=['POST'])
 def register():
     username = request.form.get('new_username')
     raw_password = request.form.get('new_password')
     password = hash_password(raw_password)
-    # Utworzenie nowego użytkownika i zapisanie go do bazy danych
+    # Creating new user and adding him to database
     new_user = User(login=username, password=password)
-    db.session.add(new_user)  # Dodaje do sesji
-    db.session.commit()  # Zapisuje zmiany
+    # Adding user into session
+    db.session.add(new_user)
+    db.session.commit()
     session['username'] = username
-    return redirect(url_for('index'))  # Przekierowuje po zakończeniu operacji
+    return redirect(url_for('index'))
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
-@app.route("/get_block_form")
-def index2():
-    return render_template("get_block.html")
-
 @app.route("/patient_form")
 def patientData():
     return render_template("patient_form.html")
 
-# Wydobywamy nowy blok(dodawanie nowego pacjenta)
+# Adding new patient to the blockchain
 @app.route("/mine_block", methods=["GET", "POST"])
 def mine_block():
     if 'username' not in session:
@@ -131,8 +124,6 @@ def mine_block():
         }
         
         user = User.query.filter_by(login=session['username']).first()
-        
-        # Pobranie ostatniego bloku z bazy danych
         last_block = Block.query.order_by(Block.index.desc()).first()
         
         if last_block:
@@ -147,7 +138,7 @@ def mine_block():
         proof = blockchain.proof_of_work(previous_proof)
         new_block = blockchain.createBlock(proof, previous_hash, patientData)
         
-        # Zapis nowego bloku do bazy danych
+        # Adding new block into database
         block_record = Block(
             index=new_index,
             timestamp=new_block["timestamp"],
@@ -155,7 +146,7 @@ def mine_block():
             hash=new_block["hash"],
             previous_hash=new_block["previous_hash"],
             user_id=user.id,
-            patient_data=json.dumps(patientData)  # Zapis danych pacjenta jako JSON
+            patient_data=json.dumps(patientData)
         )
         db.session.add(block_record)
         db.session.commit()
@@ -177,38 +168,30 @@ def get_chain():
     chain_length = len(chain_data)
     return render_template("get_chain.html", chain=chain_data, length=chain_length)
 
-# Sprawdzamy konkretny blok(pacjenta)
-@app.route("/get_block", methods = ["GET", "POST"])
+# Checking all blocks of acctual logged user
+@app.route("/get_block", methods = ["GET"])
 def get_block():
-    if request.method == "POST":
-        number = int(request.form["block_number"])
-        pesel = request.form["block_pesel"]
-    if number == 1:
-        response = {
-                "index": blockchain.chain[number-1]["index"],
-                "timestamp": blockchain.chain[number-1]["timestamp"],
-                "proof": blockchain.chain[number-1]["proof"],
-                "previous_hash": blockchain.chain[number-1]["previous_hash"],
-                "data": blockchain.chain[number-1]["data"]
-            }
-        return render_template("block.html", block_data = response)
-    if number > len(blockchain.chain) or number < 1:
-        flash("Invalid block number")
-        return redirect(url_for("index"))
-    else:
-        if pesel != blockchain.chain[number-1]["data"]["pesel"]:
-            flash("Invalid pesel")
-            return redirect(url_for("index"))
-        else:
-            response = {
-                "index": blockchain.chain[number-1]["index"],
-                "timestamp": blockchain.chain[number-1]["timestamp"],
-                "proof": blockchain.chain[number-1]["proof"],
-                "previous_hash": blockchain.chain[number-1]["previous_hash"],
-                "data": blockchain.chain[number-1]["data"]
-            }
-            return render_template("block.html", block_data = response)
+    if 'username' not in session:
+        flash('You need to be logged in to view your blocks', 'error')
+        return redirect(url_for('login'))
     
-## Sprawdzay czy skrypt jest uruchamiany bezposrednio z glownego modulu
+    user = User.query.filter_by(login=session['username']).first()
+    if not user:
+        flash('User not found', 'error')
+        return redirect(url_for('index'))
+
+    user_blocks = Block.query.filter_by(user_id=user.id).all()
+    blocks_data = [{
+        "index": block.index,
+        "timestamp": block.timestamp,
+        "proof": block.proof,
+        "hash": block.hash,
+        "previous_hash": block.previous_hash,
+        "data": json.loads(block.patient_data)
+    } for block in user_blocks]
+
+    return render_template('block.html', blocks_data=blocks_data)
+    
+# Checking if script is launched directly from main module
 if __name__ == "__main__":
     app.run(debug=True)

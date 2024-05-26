@@ -1,9 +1,11 @@
 base58==2.1.1
 blinker==1.8.2
 certifi==2024.2.2
+cffi==1.16.0
 charset-normalizer==3.3.2
 click==8.1.7
 colorama==0.4.6
+cryptography==42.0.7
 Flask==3.0.3
 Flask-Login==0.6.3
 Flask-SQLAlchemy==3.1.1
@@ -16,6 +18,7 @@ MarkupSafe==2.1.5
 multiaddr==0.0.9
 netaddr==1.2.1
 psycopg2==2.9.9
+pycparser==2.22
 requests==2.31.0
 six==1.16.0
 SQLAlchemy==2.0.30
