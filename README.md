@@ -29,7 +29,7 @@ $ pip install -r requirements.txt
 
 ### Database Configuration
 
-Change username, password, database_name to your local database config.
+Change username, password, database_name to your local database config at `config.py` file.
 
 ```bash
 DATABASE_URL=postgresql://username:password@localhost/database_name
