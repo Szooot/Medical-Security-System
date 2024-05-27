@@ -1,4 +1,4 @@
-let patientForm = document.querySelector("#patientForm")
+let patientForm1 = document.querySelector("#patientForm")
 let patientName = document.querySelector("#name")
 let patientSurname = document.querySelector("#surname")
 let patientPesel = document.querySelector("#pesel")
@@ -6,7 +6,7 @@ let patientAge = document.querySelector("#age")
 let patientCity = document.querySelector("#city")
 let template = /^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+$/
 
-patientForm.addEventListener("submit", e => {
+patientForm1.addEventListener("submit", e => {
     if(patientName.value.length > 15 || template.test(patientName.value) == false) {
         e.preventDefault()
         alert("Invalid name")
